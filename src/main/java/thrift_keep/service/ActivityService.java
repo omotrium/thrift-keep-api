@@ -8,6 +8,7 @@ import thrift_keep.model.GroupActivityResponse;
 import thrift_keep.model.GroupEntity;
 import thrift_keep.repository.ActivityRepository;
 import thrift_keep.repository.GroupRepository;
+import thrift_keep.repository.PaymentRepository;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,11 +19,15 @@ public class ActivityService {
 
     private final GroupRepository groupRepository;
     private final ActivityRepository activityRepository;
+    private final PaymentRepository paymentRepository;
 
     @Transactional
     public List<GroupActivityResponse> getMyGroupActivities(String email) {
 
         List<GroupEntity> groups = groupRepository.findAllUserGroups(email);
+
+        Double totalContributed =
+                paymentRepository.getTotalContributedByUser(email);
 
         List<GroupActivityResponse> result = new ArrayList<>();
 
@@ -36,7 +41,8 @@ public class ActivityService {
                         g.getId(),
                         g.getName(),
                         a.getMessage(),
-                        a.getCreatedAt()
+                        a.getCreatedAt(),
+                        totalContributed
                 ));
             }
         }

@@ -22,11 +22,6 @@ public class Payment {
     @JoinColumn(name = "group_id", nullable = false)
     private GroupEntity group;
 
-//    // User who should pay
-//    @ManyToOne(fetch = FetchType.LAZY)
-//    @JoinColumn(name = "user_id", nullable = false)
-//    private UserAccount user;
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "membership_id", nullable = false)
     private Membership membership;//

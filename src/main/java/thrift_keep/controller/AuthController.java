@@ -4,20 +4,13 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
-import thrift_keep.config.OtpUtil;
 import thrift_keep.exception.CustomiseException;
-import thrift_keep.model.CreateUserRequest;
 import thrift_keep.model.ResetPasswordRequest;
 import thrift_keep.model.UserAccount;
 import thrift_keep.repository.UserRepository;
 import thrift_keep.service.EmailService;
-import thrift_keep.service.GoogleService;
 import thrift_keep.service.JwtService;
-import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken;
-import thrift_keep.service.UserService;
-
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Random;
@@ -33,33 +26,6 @@ public class AuthController {
 
     private final PasswordEncoder passwordEncoder;
 
-//    private final UserService userService;
-//
-//    @PostMapping("/user")
-//    public ResponseEntity<UserAccount> createUser(@RequestBody CreateUserRequest request) {
-//        System.out.println("POST /api/users called with: {}"+ request);
-//        UserAccount user = userService.createUser(request);
-//        return ResponseEntity.ok(user);
-//    }
-//
-//    @GetMapping("/all")
-//    public List<UserAccount> getAllUsers() {
-//        return userRepository.findAll();
-//    }
-//
-//    @PostMapping("/test")
-//    public ResponseEntity<UserAccount> testSave(@RequestBody CreateUserRequest request) {
-//        System.out.println("+++++++++++++++++++++");
-//        UserAccount user = UserAccount.builder()
-//                .name(request.getName())
-//                .email(request.getEmail())
-//                .password(request.getPassword())
-//                .verified(true)
-//                .build();
-//        UserAccount saved = userRepository.save(user);
-//        System.out.println("Saved user ID: " + saved.getId());
-//        return ResponseEntity.ok(saved);
-//    }
 
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody Map<String, String> request) throws Exception {
@@ -95,11 +61,6 @@ public class AuthController {
         }
 
         UserAccount user = userOpt.get();
-//
-//        String otp = OtpUtil.generateOtp();
-//
-//        user.setResetOtp(otp);
-//        user.setResetOtpExpiry(LocalDateTime.now().plusMinutes(10));
 
         String otp = String.valueOf(new Random().nextInt(900000) + 100000);
 

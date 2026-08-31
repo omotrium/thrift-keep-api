@@ -74,4 +74,12 @@ public interface PaymentRepository extends JpaRepository<Payment, Long> {
     List<Payment> findOverduePendingPayments(
             @Param("startOfWeek") LocalDate startOfWeek,
             @Param("today") LocalDate today);
+
+
+
+    @Query("SELECT COALESCE(SUM(p.amount), 0) " +
+         "FROM Payment p " +
+         "WHERE p.membership.user.email = :email " +
+         "AND p.status = 'APPROVED'")
+    Double getTotalContributedByUser(@Param("email") String email);
 }

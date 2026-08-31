@@ -1,14 +1,11 @@
 package thrift_keep.service;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import thrift_keep.exception.CustomiseException;
 import thrift_keep.model.*;
 import thrift_keep.repository.*;
-
-import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
@@ -18,92 +15,12 @@ import java.util.*;
 @RequiredArgsConstructor
 public class GroupService {
 
-
-
     private final GroupRepository groupRepository;
     private final UserRepository userRepository;
     private final MembershipRepository membershipRepository;
     private final PaymentRepository paymentRepository;
     private  final GroupEventService groupEventService;
     private final PaymentService paymentService;
-
-    // Create a new group
-//    @Transactional
-//    public GroupEntity createGroup(
-//            String name,
-//            Double contributionAmount,
-//            Integer totalMembers,
-//            String frequency,
-//            LocalDate startDate,
-//            LocalDate endDate,
-//            String email
-//    ) {
-//
-//        UserAccount owner = userRepository.findByEmailIgnoreCase(email)
-//                .orElseThrow(() -> new CustomiseException("User not found"));
-//
-//        if (groupRepository.findByName(name).isPresent()) {
-//            throw new CustomiseException("Group name already exists");
-//        }
-//
-//        if (endDate.isBefore(startDate)) {
-//            throw new IllegalArgumentException("End date must be after start date");
-//        }
-//
-//        // 1. CREATE GROUP
-//        GroupEntity group = GroupEntity.builder()
-//                .name(name)
-//                .contributionAmount(contributionAmount)
-//                .totalMembers(totalMembers)
-//                .frequency(frequency.toUpperCase())
-//                .startDate(startDate)
-//                .endDate(endDate)
-//                .owner(owner)
-//                .active(true)
-//                .build();
-//
-//        GroupEntity savedGroup = groupRepository.save(group);
-//
-//        // 2. CREATE MEMBERSHIP (OWNER)
-//        Membership ownerMembership = new Membership();
-//        ownerMembership.setUser(owner);
-//        ownerMembership.setGroup(savedGroup);
-//        membershipRepository.save(ownerMembership);
-//
-//        // 3. GET ALL MEMBERS (start with owner only for now)
-//        List<UserAccount> members = new ArrayList<>();
-//        members.add(owner);
-//
-//        // 4. CALCULATE CYCLES
-//        int cycles = calculateCycles(startDate, endDate, frequency);
-//
-//        // 5. GENERATE PAYMENTS
-//        List<Payment> payments = new ArrayList<>();
-//
-//        for (int cycle = 1; cycle <= cycles; cycle++) {
-//
-//            LocalDate dueDate = frequency.equalsIgnoreCase("WEEKLY")
-//                    ? startDate.plusWeeks(cycle - 1)
-//                    : startDate.plusMonths(cycle - 1);
-//
-//            for (UserAccount member : members) {
-//
-//                Payment payment = new Payment();
-//                payment.setUser(member);
-//                payment.setGroup(savedGroup);
-//                payment.setAmount(contributionAmount);
-//                payment.setStatus(PaymentStatus.PENDING);
-//                payment.setCycleNumber(cycle);
-//                payment.setDueDate(dueDate);
-//
-//                payments.add(payment);
-//            }
-//        }
-//
-//        paymentRepository.saveAll(payments);
-//
-//        return savedGroup;
-//    }
 
     @Transactional
     public GroupEntity createGroup(
@@ -294,8 +211,6 @@ public class GroupService {
         membership.setActive(true);
         membership.setJoinedAt(LocalDateTime.now());
 
-        System.out.println("++++++i got here after save membership ++++++++" + membership  );
-
         membershipRepository.save(membership);
 
         System.out.println("Membership saved. ID=" + membership.getId()
@@ -359,8 +274,6 @@ public class GroupService {
 
             payments.add(payment);
         }
-
-        System.out.println("Saving payments: " + payments.size());
 
         if (!payments.isEmpty()) {
             try {

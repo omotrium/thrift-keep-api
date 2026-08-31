@@ -9,12 +9,14 @@ public class GroupActivityResponse {
     private String groupName;
     private String message;
     private LocalDateTime createdAt;
+    private Double totalContributed;
 
-    public GroupActivityResponse(Long groupId, String groupName, String message, LocalDateTime createdAt) {
+    public GroupActivityResponse(Long groupId, String groupName, String message, LocalDateTime createdAt, Double totalContributed) {
         this.groupId = groupId;
         this.groupName = groupName;
         this.message = message;
         this.createdAt = createdAt;
+        this.totalContributed = totalContributed;
     }
 
     public Long getGroupId() {
@@ -47,5 +49,13 @@ public class GroupActivityResponse {
 
     public void setCreatedAt(LocalDateTime createdAt) {
         this.createdAt = createdAt;
+    }
+
+    public Double getTotalContributed() {
+        return totalContributed;
+    }
+
+    public void setTotalContributed(Double totalContributed) {
+        this.totalContributed = totalContributed;
     }
 }

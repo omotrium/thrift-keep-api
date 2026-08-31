@@ -33,9 +33,9 @@ public class UserController {
     }
 
     @GetMapping("/email")
-    public ResponseEntity<UserAccount> getUserByEmail(@RequestParam String email) {
-        UserAccount user = userService.getUserByEmail(email);
-        return ResponseEntity.ok(user);
+    public ResponseEntity<?> getUserByEmail(Authentication authentication) {
+        UserAccount user = userService.getUserByEmail(authentication.getName());
+        return ResponseEntity.ok(user.getName());
     }
 
     @PostMapping("/push-token")

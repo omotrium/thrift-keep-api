@@ -26,6 +26,7 @@ public class GroupEntity {
     private Boolean active;
     private LocalDate startDate;
     private LocalDate endDate;
+    private String currency;
 
     @ManyToOne
     private UserAccount owner;

@@ -30,6 +30,7 @@ public class GroupService {
             String frequency,
             LocalDate startDate,
             LocalDate endDate,
+            String currency,
             String email
     ) {
 
@@ -52,6 +53,7 @@ public class GroupService {
                 .startDate(startDate)
                 .endDate(endDate)
                 .owner(owner)
+                .currency(currency)
                 .active(true)
                 .build();
 
@@ -173,6 +175,7 @@ public class GroupService {
                     g.getId(),
                     g.getName(),
                     g.getContributionAmount(),
+                    g.getCurrency(),
                     g.getTotalMembers(),
                     g.getFrequency(),
                     g.getOwner().getEmail().equals(email),
@@ -193,13 +196,13 @@ public class GroupService {
         GroupEntity group = groupRepository.findById(groupId)
                 .orElseThrow(() -> new CustomiseException("Group not found"));
 
-        // ✅ capacity check
+        // capacity check
         int currentSlots = membershipRepository.countByGroup(group);
         if (currentSlots >= group.getTotalMembers()) {
             throw new CustomiseException("Group is already full");
         }
 
-        // ✅ auto-assign slot
+        // auto-assign slot
         int slot = findNextAvailableSlot(group);
 
         Membership membership = new Membership();
@@ -267,7 +270,7 @@ public class GroupService {
             payment.setDueDate(dueDate);
             payment.setStatus(PaymentStatus.PENDING);
 
-            // ✅ payout logic
+            // payout logic
             if (cycle == membership.getSlot()) {
                 payment.setIsPayout(true);
             }
@@ -309,7 +312,7 @@ public class GroupService {
         GroupEntity group = groupRepository.findById(groupId)
                 .orElseThrow(() -> new CustomiseException("Group not found"));
 
-        // ✅ Only owner can remove members
+        // Only owner can remove members
         if (!group.getOwner().getEmail().equalsIgnoreCase(requesterEmail)) {
             throw new CustomiseException("You are not allowed to remove members");
         }

@@ -83,7 +83,7 @@ public class AuthController {
     @PostMapping("/reset-password")
     public ResponseEntity<?> resetPassword(@RequestBody ResetPasswordRequest request) {
 
-        // ✅ Validate input
+        // Validate input
         if (request.getEmail() == null ||
                 request.getOtp() == null ||
                 request.getNewPassword() == null ||
@@ -93,7 +93,7 @@ public class AuthController {
                     .body(Map.of("error", "Missing required fields"));
         }
 
-        // ✅ Find user
+        //  Find user
         Optional<UserAccount> userOpt =
                 userRepository.findByEmailIgnoreCase(request.getEmail());
 
@@ -104,13 +104,13 @@ public class AuthController {
 
         UserAccount user = userOpt.get();
 
-        // ✅ Max retry check (int → no null check needed)
+        //  Max retry check (int → no null check needed)
         if (user.getResetOtpAttempts() >= 3) {
             return ResponseEntity.badRequest()
                     .body(Map.of("error", "Too many invalid attempts. Request new OTP."));
         }
 
-        // ✅ Expiry check
+        // Expiry check
         if (user.getResetOtpExpiry() == null ||
                 user.getResetOtpExpiry().isBefore(LocalDateTime.now())) {
 
@@ -118,7 +118,7 @@ public class AuthController {
                     .body(Map.of("error", "OTP expired"));
         }
 
-        // ✅ Verify OTP using HASH
+        // Verify OTP using HASH
         boolean otpMatches = passwordEncoder.matches(
                 request.getOtp(),
                 user.getResetOtpHash()
@@ -132,10 +132,10 @@ public class AuthController {
                     .body(Map.of("error", "Invalid OTP"));
         }
 
-        // ✅ SUCCESS → update password
+        // SUCCESS → update password
         user.setPassword(passwordEncoder.encode(request.getNewPassword()));
 
-        // ✅ Clear OTP data
+        //  Clear OTP data
         user.setResetOtpHash(null);
         user.setResetOtpExpiry(null);
         user.setResetOtpAttempts(0);

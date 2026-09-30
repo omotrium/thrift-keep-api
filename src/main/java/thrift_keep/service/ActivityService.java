@@ -47,7 +47,7 @@ public class ActivityService {
             }
         }
 
-        // ✅ sort globally (latest first)
+        // sort globally (latest first)
         result.sort((a, b) -> b.getCreatedAt().compareTo(a.getCreatedAt()));
 
         return result;

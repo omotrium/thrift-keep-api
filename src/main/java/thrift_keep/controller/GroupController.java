@@ -2,12 +2,14 @@ package thrift_keep.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-import thrift_keep.model.*;
-import thrift_keep.service.GroupService;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import thrift_keep.service.PaymentService;
+import org.springframework.web.bind.annotation.*;
+import thrift_keep.model.AddMemberRequest;
+import thrift_keep.model.CreateGroupRequest;
+import thrift_keep.model.GroupEntity;
+import thrift_keep.model.GroupResponse;
+import thrift_keep.service.GroupService;
 
 import java.util.List;
 
@@ -17,7 +19,6 @@ import java.util.List;
 public class GroupController {
 
     private final GroupService groupService;
-    private final PaymentService paymentService;
 
     // Create a group
     @PostMapping
@@ -35,6 +36,7 @@ public class GroupController {
                 request.getFrequency(),
                 request.getStartDate(),
                 request.getEndDate(),
+                request.getCurrency(),
                 email
         );
         return ResponseEntity.ok(group);

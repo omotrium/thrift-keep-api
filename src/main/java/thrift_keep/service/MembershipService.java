@@ -8,7 +8,6 @@ import thrift_keep.model.GroupEntity;
 import thrift_keep.model.UserAccount;
 import thrift_keep.repository.MembershipRepository;
 
-import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -43,8 +42,4 @@ public class MembershipService {
         return membershipRepository.findById(id);
     }
 
-//    @Transactional(readOnly = true)
-//    public List<Membership> getMembersByGroupIdSorted(Long group) {
-//        return membershipRepository.findByGroup(group);
-//    }
 }

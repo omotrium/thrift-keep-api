@@ -16,8 +16,9 @@ public class PaymentResponse {
     private Double amount;
     private LocalDate dueDate;
     private boolean isOwner;
+    private String currency;
 
-    public PaymentResponse(Long id, String memberName, String memberEmail, int cycleNumber, String status, Double amount, LocalDate dueDate, boolean isOwner) {
+    public PaymentResponse(Long id, String memberName, String memberEmail, int cycleNumber, String status, Double amount, LocalDate dueDate, boolean isOwner, String currency) {
         this.id = id;
         this.memberName = memberName;
         this.memberEmail = memberEmail;
@@ -26,6 +27,7 @@ public class PaymentResponse {
         this.amount = amount;
         this.dueDate = dueDate;
         this.isOwner = isOwner;
+        this.currency = currency;
     }
 
     public PaymentResponse(Payment p) {
@@ -35,5 +37,6 @@ public class PaymentResponse {
         this.amount = p.getAmount();
         this.status = p.getStatus().name();
         this.dueDate = p.getDueDate();
+        this.currency = p.getCurrency();
     }
 }

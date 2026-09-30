@@ -119,7 +119,8 @@ public class PaymentService {
                         p.getStatus().name(),
                         p.getAmount(),
                         p.getDueDate(),
-                        p.getGroup().getOwner().getEmail().equals(email)
+                        p.getGroup().getOwner().getEmail().equals(email),
+                        p.getCurrency()
                 ))
                 .toList();
     }

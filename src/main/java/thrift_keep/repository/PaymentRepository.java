@@ -1,17 +1,13 @@
 package thrift_keep.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import thrift_keep.model.*;
-
 import java.time.LocalDate;
 import java.util.List;
 
 public interface PaymentRepository extends JpaRepository<Payment, Long> {
-
-   List<Payment> findByGroupId(Long groupId);
 
     @Query(
             "SELECT p FROM Payment p " +
@@ -19,34 +15,13 @@ public interface PaymentRepository extends JpaRepository<Payment, Long> {
                     "AND (p.group.owner.email = :email " +
                     "OR p.membership.user.email = :email)"
     )
-    List<Payment> findPaymentsForUser(
-            @Param("groupId") Long groupId,
-            @Param("email") String email
-    );
+    List<Payment> findPaymentsForUser(@Param("groupId") Long groupId, @Param("email") String email);
 
     void deleteByMembership(Membership membership);
 
     boolean existsByMembershipAndCycleNumber(Membership membership, int cycle);
 
-    int countByGroupAndCycleNumberAndStatus(
-            GroupEntity group,
-            int cycle,
-            PaymentStatus status
-    );
-
-    @Query(
-            "SELECT p FROM Payment p " +
-                    "JOIN FETCH p.membership m " +
-                    "JOIN FETCH m.user " +
-                    "WHERE p.group = :group " +
-                    "AND p.cycleNumber = :cycle " +
-                    "AND p.status = :status"
-    )
-    List<Payment> findByGroupAndCycleNumberAndStatus(
-            @Param("group") GroupEntity group,
-            @Param("cycle") int cycle,
-            @Param("status") PaymentStatus status
-    );
+    int countByGroupAndCycleNumberAndStatus(GroupEntity group, int cycle, PaymentStatus status);
 
     void deleteByGroupId(Long groupId);
 

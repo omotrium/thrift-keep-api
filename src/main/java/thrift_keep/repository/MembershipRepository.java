@@ -18,8 +18,6 @@ public interface MembershipRepository extends JpaRepository<Membership, Long> {
 
     List<Membership> findByActiveTrue();
 
-    boolean existsByUserAndGroup(UserAccount user, GroupEntity group);
-
     @Modifying
     @Query("DELETE FROM Membership m WHERE m.user = :user AND m.group = :group")
     void deleteByUserAndGroup(@Param("user") UserAccount user,
@@ -28,8 +26,6 @@ public interface MembershipRepository extends JpaRepository<Membership, Long> {
     Optional<Membership> findByGroupIdAndUserId(Long groupId, Long userId);
 
     void deleteByGroupId(Long groupId);
-
-    boolean existsByGroupAndSlot(GroupEntity group, Integer slot);
 
     @Query("SELECT m.slot FROM Membership m WHERE m.group = :group")
     List<Integer> findSlotsByGroup(@Param("group") GroupEntity group);

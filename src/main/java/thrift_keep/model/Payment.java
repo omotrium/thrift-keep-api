@@ -52,4 +52,5 @@ public class Payment {
     private Integer lastNotifiedCycle;
 
     private Boolean isPayout = false;
+    private String currency;
 }

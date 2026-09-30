@@ -11,6 +11,7 @@ public class GroupResponse {
     private Long id;
     private String name;
     private Double contributionAmount;
+    private String currency;
     private Integer totalMembers;
     private String frequency;
     private boolean isOwner;
@@ -20,10 +21,11 @@ public class GroupResponse {
     private int pendingPayments;
     private int pendingApprovals;
 
-    public GroupResponse(Long id, String name, Double contributionAmount, Integer totalMembers, String frequency, boolean isOwner, List<MemberResponse> members, int pendingPayments, int pendingApprovals) {
+    public GroupResponse(Long id, String name, Double contributionAmount, String currency, Integer totalMembers, String frequency, boolean isOwner, List<MemberResponse> members, int pendingPayments, int pendingApprovals) {
         this.id = id;
         this.name = name;
         this.contributionAmount = contributionAmount;
+        this.currency = currency;
         this.totalMembers = totalMembers;
         this.frequency = frequency;
         this.isOwner = isOwner;
@@ -79,5 +81,13 @@ public class GroupResponse {
 
     public void setMembers(List<MemberResponse> members) {
         this.members = members;
+    }
+
+    public String getCurrency() {
+        return currency;
+    }
+
+    public void setCurrency(String currency) {
+        this.currency = currency;
     }
 }

@@ -12,4 +12,5 @@ public class CreateGroupRequest {
     private String frequency; // WEEKLY / MONTHLY
     private LocalDate startDate;
     private LocalDate endDate;
+    private String currency;
 }

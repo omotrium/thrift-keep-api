@@ -18,26 +18,46 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+
         http
                 .csrf(csrf -> csrf.disable())
+
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/public/**", "/auth/**").permitAll()
-                        .requestMatchers("/api/**").permitAll()
+
+                        // Public authentication endpoints
+                        .requestMatchers(
+                                "/public/**",
+                                "/auth/**",
+                                "/oauth2/**",
+                                "/login/**"
+                        ).permitAll()
+
+                        // WebSocket handshake
                         .requestMatchers("/ws/**").permitAll()
+
+                        // All API requests require JWT authentication
+                        .requestMatchers("/api/**").authenticated()
+
+                        // Everything else requires authentication
                         .anyRequest().authenticated()
                 )
 
-                .sessionManagement(session -> session
-                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                .sessionManagement(session ->
+                        session.sessionCreationPolicy(
+                                SessionCreationPolicy.STATELESS
+                        )
                 )
 
-                // Add JWT filter
-                .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(
+                        jwtAuthFilter,
+                        UsernamePasswordAuthenticationFilter.class
+                )
 
-
-
-                .oauth2Login(oauth2 -> oauth2
-                        .defaultSuccessUrl("/auth/oauth2-success", true)
+                .oauth2Login(oauth2 ->
+                        oauth2.defaultSuccessUrl(
+                                "/auth/oauth2-success",
+                                true
+                        )
                 );
 
         return http.build();

@@ -12,6 +12,7 @@ import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -23,9 +24,7 @@ public class PaymentService {
     private final PaymentRepository paymentRepository;
     private final ActivityRepository activityRepository;
     private final NotificationService notificationService;
-    private final GroupRepository groupRepository;
-    private final MyWebSocketHandler webSocketHandler;
-    private final PushNotification pushNotification;
+    private final PushNotificationService pushNotificationService;
 
     // Member marks as paid
     @Transactional
@@ -69,7 +68,45 @@ public class PaymentService {
                 )
         );
 
+        Map<String, Object> notificationData =
+                new HashMap<>();
+
+        notificationData.put(
+                "type",
+                "PAYMENT_SUBMITTED"
+        );
+
+        notificationData.put(
+                "groupId",
+                payment.getGroup().getId()
+        );
+
+        notificationData.put(
+                "paymentId",
+                payment.getId()
+        );
+
+        pushNotificationService.sendToUser(
+                payment.getMembership().getUser().getId(),
+                "Payment submitted",
+                payment.getMembership().getUser().getName()
+                        + " submitted "
+                        + payment.getAmount()
+                        + " to "
+                        + payment.getGroup().getName()
+                        + ".",
+                Map.of(
+                        "type",
+                        "PAYMENT_SUBMITTED",
+
+                        "groupId",
+                        payment.getGroup().getId(),
+                        "paymentId",
+                        payment.getId()
+                )
+        );
         return new PaymentResponse(paymentRepository.save(payment));
+
     }
 
     // Admin approves payment
@@ -100,6 +137,33 @@ public class PaymentService {
                         "Payment approved for Week " + payment.getCycleNumber(),
                         payment.getCycleNumber()
                 )
+        );
+
+        Map<String, Object> notificationData =
+                new HashMap<>();
+
+        notificationData.put(
+                "type",
+                "PAYMENT_APPROVED"
+        );
+
+        notificationData.put(
+                "groupId",
+                payment.getGroup().getId()
+        );
+
+        notificationData.put(
+                "paymentId",
+                payment.getId()
+        );
+
+        pushNotificationService.sendToUser(
+                payment.getMembership().getUser().getId(),
+                "Payment approved",
+                "Your contribution to "
+                        + payment.getGroup().getName()
+                        + " has been approved.",
+                notificationData
         );
 
         return new PaymentResponse(paymentRepository.save(payment));

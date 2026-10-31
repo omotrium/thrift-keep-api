@@ -21,6 +21,7 @@ public class GroupService {
     private final PaymentRepository paymentRepository;
     private  final GroupEventService groupEventService;
     private final PaymentService paymentService;
+    private final PushNotificationService pushNotificationService;
 
     @Transactional
     public GroupEntity createGroup(
@@ -216,14 +217,22 @@ public class GroupService {
 
         membershipRepository.save(membership);
 
-        System.out.println("Membership saved. ID=" + membership.getId()
-                + ", user=" + user.getEmail()
-                + ", groupId=" + group.getId());
-
-
         generatePaymentsForMembership(group, membership);
 
-        groupEventService.notifyGroupUpdate(groupId);
+        pushNotificationService.sendToUser(
+                membership.getUser().getId(),
+                "Added to a group",
+                "You have been added to "
+                        + group.getName()
+                        + ".",
+                Map.of(
+                        "type",
+                        "MEMBER_ADDED",
+
+                        "groupId",
+                        group.getId()
+                )
+        );
     }
 
     private int findNextAvailableSlot(GroupEntity group) {
@@ -299,6 +308,26 @@ public class GroupService {
             throw new CustomiseException("Not allowed to delete this group");
         }
 
+        List<Long> memberIds =
+                group.getMembers()
+                        .stream()
+                        .map(member ->
+                                member.getUser().getId()
+                        )
+                        .toList();
+        pushNotificationService.sendToUsers(
+                memberIds,
+                "Group deleted",
+                group.getName()
+                        + " has been deleted.",
+                Map.of(
+                        "type",
+                        "GROUP_DELETED",
+                        "groupId",
+                        group.getId()
+                )
+        );
+
         paymentRepository.deleteByGroupId(groupId);
 
         membershipRepository.deleteByGroupId(groupId);
@@ -328,6 +357,21 @@ public class GroupService {
         if (membership.getUser().getId().equals(group.getOwner().getId())) {
             throw new CustomiseException("Cannot remove group owner");
         }
+
+        pushNotificationService.sendToUser(
+                membership.getUser().getId(),
+                "Removed from group",
+                "You have been removed from "
+                        + group.getName()
+                        + ".",
+                Map.of(
+                        "type",
+                        "MEMBER_REMOVED",
+
+                        "groupId",
+                        group.getId()
+                )
+        );
 
         //  delete payments by MEMBERSHIP (correct model)
         paymentRepository.deleteByMembership(membership);
